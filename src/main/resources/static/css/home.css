@@ -1,0 +1,42 @@
+@charset "ISO-8859-1";
+ html, body {
+	height: 100%;
+   	margin: 0;
+   	
+}
+
+.movie-body{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap:wrap ;
+    height: 100%;
+    overflow-y: scroll;
+	padding-top: 50px;
+    background: dimgrey; 
+   
+    
+    
+}
+.movie-body .card{
+    margin: 20px;
+    height: 540px;
+    width: 300px;
+    background-color: inherit;
+    border: none;
+    align-items: center;
+    
+}
+
+.movie-body .card img{
+	height: 400px;
+    width: 250px;
+    
+}
+
+body .navbar{
+	 position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+}
