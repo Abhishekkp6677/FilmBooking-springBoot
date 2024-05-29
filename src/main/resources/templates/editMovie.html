@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Add Movie Details</h2>
+        <form action="/editMovie" method="POST" enctype="multipart/form-data">
+        	<input type="text" th:value="${movie.movieId}" name="movieId">
+            <div class="form-group">
+                <label for="movieName">Movie Name</label>
+                <input type="text" th:value="${movie.movieName}"  class="form-control" id="movieName" name="movieName" placeholder="Enter movie name" >
+            </div>
+            <div class="form-group">
+                <label for="movieImage">Movie Image</label>
+                <input type="file" class="form-control-file" id="movieImage" name="movieImage" accept="image/*" >
+            </div>
+             <div class="form-group">
+                <label>Movie Theatres</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="movieTheatre[]" id="theatre1" value="AMC" required
+                    th:checked="${movie.movieTheatre != null and movie.movieTheatre.contains('AMC')}">
+                    <label class="form-check-label" for="theatre1">
+                        AMC
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="movieTheatre[]" id="theatre2" value="Regal Cinemas"
+                    th:checked="${movie.movieTheatre != null and movie.movieTheatre.contains('Regal Cinemas')}">
+                    <label class="form-check-label" for="theatre2">
+                        Regal Cinemas
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="movieTheatre[]" id="theatre3" value="IMAX"
+                    th:checked="${movie.movieTheatre != null and movie.movieTheatre.contains('IMAX')}">
+                    <label class="form-check-label" for="theatre3">
+                        IMAX
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="movieTheatre[]" id="theatre4" value="Cinemark"
+                    th:checked="${movie.movieTheatre != null and movie.movieTheatre.contains('Cinemark')}">
+                    <label class="form-check-label" for="theatre4">
+                        Cinemark
+                    </label>
+                </div>
+            </div>
+
+           
+            
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

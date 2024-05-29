@@ -30,11 +30,12 @@
             
             <div class="dropdown">
               <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                USER
+              <span th:text="${username != null} ? ${username} : 'LOGIN'">USER</span>
+                
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/login">login</a></li>
-                <li><a class="dropdown-item" href="#">logout</a></li>
+                <li th:if="${username==null}"><a class="dropdown-item" href="/login">login</a></li>
+                <li th:if="${username!=null}"><a class="dropdown-item" href="/logout">logout</a></li>
               </ul>
             </div>
             

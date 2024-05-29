@@ -1,7 +1,11 @@
 package com.demo.filmBooking.beans;
 
 
+import java.util.List;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +26,19 @@ public class Movie {
 	@Column
 	private String imageName;
 	
+	@ElementCollection
+    @Column(name = "theatre")
+	private List<String> movieTheatre;
+	
+	
+	public List<String> getMovieTheatre() {
+		return movieTheatre;
+	}
+
+	public void setMovieTheatre(List<String> movieTheatre) {
+		this.movieTheatre = movieTheatre;
+	}
+
 	public Movie() {
 		System.out.println("movie object created");
 	}
@@ -52,8 +69,11 @@ public class Movie {
 
 	@Override
 	public String toString() {
-		return "Movie [movieId=" + movieId + ", movieName=" + movieName + ", imageName=" + imageName + "]";
+		return "Movie [movieId=" + movieId + ", movieName=" + movieName + ", imageName=" + imageName + ", movieTheatre="
+				+ movieTheatre + "]";
 	}
+
+	
 	
 	
 	

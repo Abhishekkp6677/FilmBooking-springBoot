@@ -30,9 +30,13 @@
 
 .movie-body .card img{
 	height: 400px;
-    width: 250px;
-    
+	width: 250px;
+	transition: transform 0.5s ease;
 }
+.movie-body .card img:hover{
+	transform: scale(1.05);
+}
+
 
 body .navbar{
 	 position: fixed;
