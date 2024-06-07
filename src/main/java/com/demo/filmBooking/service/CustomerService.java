@@ -1,20 +1,32 @@
 package com.demo.filmBooking.service;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.demo.filmBooking.beans.Customer;
 import com.demo.filmBooking.beans.Movie;
+import com.demo.filmBooking.beans.MovieShows;
+import com.demo.filmBooking.beans.Theater;
 import com.demo.filmBooking.repository.CustomerRepo;
 import com.demo.filmBooking.repository.MovieRepo;
+import com.demo.filmBooking.repository.ShowRepo;
+import com.demo.filmBooking.repository.TheaterRepo;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class CustomerService {
@@ -24,6 +36,12 @@ public class CustomerService {
 	
 	@Autowired
 	private MovieRepo movieRepo;
+	
+	@Autowired
+	private TheaterRepo theaterRepo;
+
+	@Autowired
+	private ShowRepo showRepo;
 	
 	
 	
@@ -41,16 +59,36 @@ public class CustomerService {
 
 	private final String UPLOAD_DIR = "src/main/resources/static/images/";
 
-	 public Movie saveMovie(Movie movie, MultipartFile imageFile) throws IOException {
-	      if (!imageFile.isEmpty()) {
-				String imageName = imageFile.getOriginalFilename();
-				Path path = Paths.get(UPLOAD_DIR + imageName);
-				Files.write(path, imageFile.getBytes());
-				movie.setImageName(imageName);
+	 public Movie saveMovie( String movieName ,MultipartFile imageFile,String theatersJson) throws IOException {
+		 
+		Movie movie= new Movie();
+		movie.setMovieName(movieName);
+		
+	    if (!imageFile.isEmpty()) {
+			String imageName = imageFile.getOriginalFilename();
+			Path path = Paths.get(UPLOAD_DIR + imageName);
+			Files.write(path, imageFile.getBytes());
+			movie.setImageName(imageName);
+	    }
+	      
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    List<Map<String, String>> theatersList = objectMapper.readValue(theatersJson, new TypeReference<List<Map<String, String>>>() {});
+	    List<Theater> theaters = new ArrayList<Theater>();
+	    for (Map<String, String> theaterMap : theatersList) {
+	    	String theaterName = theaterMap.get("value");
+	        Theater theater = theaterRepo.findByTheaterName(theaterName);
+	        if (theater == null) {
+	        	theater = new Theater();
+	            theater.setTheaterName(theaterName);
+	            theaterRepo.save(theater);
 	        }
-	        movieRepo.save(movie);
-	    return movie;	
-	}
+	        theaters.add(theater);
+	        }
+	    	
+	    movie.setTheaters(theaters);
+	    
+	    movieRepo.save(movie);
+	    return movie;	}
 	 
 	 public List<Movie> getAllMovies() {
 		List<Movie> Movies =movieRepo.findAll();
@@ -65,21 +103,79 @@ public class CustomerService {
 	 
 	 
 
-	public void editMovie(Long id, String movieName, List<String> movieTheatre, MultipartFile imageFile) throws IOException {
+	public void editMovie(Long id, String movieName, MultipartFile imageFile, String theatersJson) throws IOException {
 		Movie movie=movieRepo.findById(id).orElseThrow();
-		 movie.setMovieName(movieName);
-		 movie.setMovieTheatre(movieTheatre);
 		 if (!imageFile.isEmpty()) {
 				String imageName = imageFile.getOriginalFilename();
 				Path path = Paths.get(UPLOAD_DIR + imageName);
 				Files.write(path, imageFile.getBytes());
 				movie.setImageName(imageName);
 	        }
-		movieRepo.save(movie);
+		 
+		 ObjectMapper objectMapper = new ObjectMapper();
+		    List<Map<String, String>> theatersList = objectMapper.readValue(theatersJson, new TypeReference<List<Map<String, String>>>() {});
+		    List<Theater> theaters = new ArrayList<Theater>();
+		    for (Map<String, String> theaterMap : theatersList) {
+		    	String theaterName = theaterMap.get("value");
+		        Theater theater = theaterRepo.findByTheaterName(theaterName);
+		        if (theater == null) {
+		        	theater = new Theater();
+		            theater.setTheaterName(theaterName);
+		            theaterRepo.save(theater);
+		        }
+		        theaters.add(theater);
+		        }
+		    	
+		    movie.setTheaters(theaters);
+		    movie.setMovieName(movieName);
+		 
+		    movieRepo.save(movie);
 	}
 	
 	public void deleteMovie(Long id) {
 		movieRepo.deleteById(id);
+	}
+
+	public List<Theater> getAllTheaters() {
+		List<Theater> theaters=theaterRepo.findAll();
+		return theaters;
+		
+	}
+
+	public List<Theater> findTheatersByMovie(Long movieId) {
+		Optional<Movie> movie = movieRepo.findById(movieId);
+        if (movie.isPresent()) {
+            return movie.get().getTheaters();
+        }
+        return new ArrayList<>();
+	}
+	
+	public void saveShows(MovieShows movieShows) {
+		showRepo.save(movieShows);
+	}
+
+	public void saveShows(Movie movie, Theater theater, String movieTiming) {
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+		MovieShows movieShows= new MovieShows();
+		
+			
+			movieShows.setMovie(movie);
+			movieShows.setTheater(theater);
+			movieShows.setMovieTiming(movieTiming);
+
+		
+		showRepo.save(movieShows);
+		
+	}
+
+	public List<MovieShows> getAllShows() {
+		List<MovieShows> shows=showRepo.findAll();
+		return shows;
+	}
+
+	public List<MovieShows> getShowByMovieId(Movie movie) {
+		List<MovieShows> shows=showRepo.findByMovie(movie);
+		return shows;
 	}
 	
 }

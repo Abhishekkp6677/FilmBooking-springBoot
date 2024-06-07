@@ -16,7 +16,7 @@
             <div class="card-body d-flex flex-column justify-content-center align-items-center">
               <h5 class="card-title" th:text="${movie.movieName}">Card title</h5>
               <p class="card-text"></p>
-              <a href="#" class="btn btn-outline-light">BOOK TICKET</a>
+              <a th:href="@{/bookTicket/{movieId}(movieId=${movie.movieId})}" class="btn btn-outline-light">BOOK TICKET</a>
             </div>
           </div>
 

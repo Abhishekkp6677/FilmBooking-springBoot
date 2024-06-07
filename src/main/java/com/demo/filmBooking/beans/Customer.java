@@ -1,11 +1,10 @@
 package com.demo.filmBooking.beans;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.List;
+
+import jakarta.persistence.*;
+
 
 @Entity
 @Table(name="customer_table")
@@ -15,6 +14,8 @@ public class Customer {
 	@GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
 	private long customerId;
 	
+	
+
 	@Column(nullable = false)
 	private String customerName;
 	
@@ -28,15 +29,16 @@ public class Customer {
 	@Column(nullable = false)
 	private String customerNumber;
 	
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookingHistory> bookingHistory;
+	
+	
+	
 	public Customer() {
 		System.out.println("customer object created");
 	}
 
-	@Override
-	public String toString() {
-		return "Customer [customer_id=" + customerId + ", customerName=" + customerName + ", customerEmail="
-				+ customerEmail + ", customerPassword=" + customerPassword + ", customerNumber=" + customerNumber + "]";
-	}
+	
 
 	
 
@@ -78,6 +80,21 @@ public class Customer {
 
 	public void setCustomerNumber(String customerNumber) {
 		this.customerNumber = customerNumber;
+	}
+	
+	public List<BookingHistory> getBookingHistory() {
+		return bookingHistory;
+	}
+
+	public void setBookingHistory(List<BookingHistory> bookingHistory) {
+		this.bookingHistory = bookingHistory;
+	}
+	
+	@Override
+	public String toString() {
+		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", customerEmail="
+				+ customerEmail + ", customerPassword=" + customerPassword + ", customerNumber=" + customerNumber
+				+ ", bookingHistory=" + bookingHistory + "]";
 	}
 	
 	

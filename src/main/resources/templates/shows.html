@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Shows List</h2>
+            <a href="/admin/addShows" class="btn btn-primary">Add Shows</a>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">show ID</th>
+                    <th scope="col">Movie Name</th>
+                    <th scope="col">Theatre</th>
+                    <th scope="col">show timing</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            	<tr th:each="shows : ${shows}" >
+            		<td th:text="${shows.showId}"></td>
+            		<td th:text="${shows.movie.movieName}"></td>
+            		<td th:text="${shows.theater.theaterName}"></td>
+            		<td th:text="${shows.movieTiming}"></td>
+            		<td><a class="btn btn-info btn-sm">edit</a>
+            			<a class="btn btn-danger btn-sm">delete</a></td>
+            	</tr>             
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

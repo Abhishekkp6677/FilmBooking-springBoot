@@ -2,8 +2,12 @@ package com.demo.filmBooking.Controller;
 
 import java.io.IOException;
 import java.security.PublicKey;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,11 +17,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.demo.filmBooking.beans.Customer;
 import com.demo.filmBooking.beans.Movie;
+import com.demo.filmBooking.beans.MovieShows;
+import com.demo.filmBooking.beans.Theater;
 import com.demo.filmBooking.repository.MovieRepo;
 import com.demo.filmBooking.service.CustomerService;
 
@@ -112,9 +120,11 @@ public class BusController {
 	}
 	
 	@PostMapping("/addMovie")
-	public String addMovie(Movie movie, @RequestParam("movieImage") MultipartFile imageFile) {
+	public String addMovie(@RequestParam("movieName")String movieName,
+						   @RequestParam("movieImage") MultipartFile imageFile,
+						   @RequestParam("theaters") String theatersJson) {
         try {
-            service.saveMovie(movie, imageFile);
+            service.saveMovie(movieName, imageFile, theatersJson);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,7 +137,10 @@ public class BusController {
 		System.out.println("****editMovie controller****");
 		Movie movie=service.getMovieById(id).orElseThrow();
 		model.addAttribute("movie", movie);
-		System.out.println(movie);
+		List<Theater> theaters=movie.getTheaters();
+		String theaterNames= theaters.stream().map(Theater::getTheaterName).collect(Collectors.joining(","));
+		System.out.println(theaterNames);
+		model.addAttribute("theaterNames", theaterNames);
 
 		return "editMovie.html";
 	}
@@ -135,13 +148,14 @@ public class BusController {
 	@PostMapping("/editMovie")
 	public String editMovie(@RequestParam Long movieId,
 							@RequestParam String movieName,
-							@RequestParam List<String> movieTheatre,
-							@RequestParam("movieImage") MultipartFile imageFile) throws IOException {
+							@RequestParam("movieImage") MultipartFile imageFile,
+							@RequestParam("theaters") String theatersJson) throws IOException {
 		System.out.println(movieId+"*****");
-		service.editMovie(movieId, movieName, movieTheatre ,imageFile);
+		service.editMovie(movieId, movieName,imageFile,theatersJson);
 		return "redirect:/admin";
 		
 	}
+	
 	@GetMapping("admin/deleteMovies/{id}")
 	public String deleteMovie(@PathVariable Long id) throws IOException {
 		service.deleteMovie(id);
@@ -149,6 +163,67 @@ public class BusController {
 		
 	}
 
+	@GetMapping("admin/shows")
+	public String shows(Model model) {
+		
+		List<MovieShows> shows =service.getAllShows();
+		model.addAttribute("shows",shows);
+		System.out.println(shows);
+		return "shows.html";
+		
+	}
+	
+	@GetMapping("admin/addShows")
+	public String addShowspage(Model model) {
+		List<Movie> movies=service.getAllMovies();
+		List<Theater> theaters=service.getAllTheaters();
+		model.addAttribute("movies",movies);
+		model.addAttribute("theaters",theaters);
+		System.out.println(movies);
+		return "addShows.html";
+		
+	}
+
+	@GetMapping("admin/addShows/{movieId}")
+	@ResponseBody
+	public List<Theater> getTheatersByMovie(@PathVariable Long movieId) {
+		
+		List<Theater> theater=service.findTheatersByMovie(movieId);
+		return theater;
+		
+		
+	}
+	
+	@PostMapping("/addShows")
+	public String addShowspage(@RequestParam Movie movie,
+							   @RequestParam Theater theater,
+							   @RequestParam String movieTiming) {
+//		System.out.println(movie);
+//		System.out.println(theater);
+//		System.out.println(movieTiming);
+		service.saveShows( movie, theater, movieTiming);
+		
+		return "redirect:/admin/shows";
+		
+	}
+	
+	@GetMapping("/bookTicket/{movieId}")
+	public String getShows(Model model,@PathVariable Long movieId) {
+		
+		Movie movie = service.getMovieById(movieId).orElseThrow();
+		List<MovieShows> shows=service.getShowByMovieId(movie);
+		System.out.println(shows);
+		model.addAttribute("shows", shows);
+		return "bookTicket.html";
+		 
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

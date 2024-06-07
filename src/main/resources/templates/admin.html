@@ -12,6 +12,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Movies List</h2>
             <a href="/admin/addMovie" class="btn btn-primary">Add Movies</a>
+            <a href="/admin/shows" class="btn btn-primary">View Shows</a>
         </div>
         <table class="table table-striped">
             <thead>
@@ -27,7 +28,7 @@
                     <th scope="row" th:text="${movie.movieId}">1</th>
                     <td th:text="${movie.movieName}"></td>
                     <td><ul>
-                            <li th:each="theatre : ${movie.movieTheatre}" th:text="${theatre}"></li>
+                            <li th:each="theatre : ${movie.theaters}" th:text="${theatre.theaterName}"></li>
                         </ul>
 					</td>
                     
