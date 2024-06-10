@@ -17,16 +17,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.demo.filmBooking.beans.BookingHistory;
 import com.demo.filmBooking.beans.Customer;
 import com.demo.filmBooking.beans.Movie;
 import com.demo.filmBooking.beans.MovieShows;
 import com.demo.filmBooking.beans.Theater;
+import com.demo.filmBooking.repository.BookingHistoryRepo;
 import com.demo.filmBooking.repository.CustomerRepo;
 import com.demo.filmBooking.repository.MovieRepo;
 import com.demo.filmBooking.repository.ShowRepo;
 import com.demo.filmBooking.repository.TheaterRepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpSession;
 
 @Component
 public class CustomerService {
@@ -42,6 +46,9 @@ public class CustomerService {
 
 	@Autowired
 	private ShowRepo showRepo;
+
+	@Autowired
+	private BookingHistoryRepo bookingHistoryRepo;
 	
 	
 	
@@ -177,5 +184,38 @@ public class CustomerService {
 		List<MovieShows> shows=showRepo.findByMovie(movie);
 		return shows;
 	}
+
+
+
+	public List<String> findMovieTimingByTheater(Long movieId, Long theaterId) {
+		// TODO Auto-generated method stub
+		return showRepo.findMovieTimingByTheater( movieId,  theaterId);
+	}
+
+	public BookingHistory addBookingHistory(Long customerId, String date,String theaterName ,String movieTiming, Long id, List<String> seats) {
+		
+		Customer customer=repo.findById(customerId).orElseThrow();
+		Theater theater= theaterRepo.findByTheaterName(theaterName);
+		Movie movie = movieRepo.findById(id).orElseThrow();
+		MovieShows shows= showRepo.findByTheaterAndMovieAndMovieTiming(theater,movie,movieTiming);
+		
+		BookingHistory history= new BookingHistory();
+		history.setShowDate(date);
+		history.setCustomer(customer);
+		history.setShows(shows);
+		history.setSeats(seats);
+		System.out.println(history);
+		return bookingHistoryRepo.save(history);
+		
+	}
+
+	public List<BookingHistory> getHistory(Long id) {
+		
+		Customer customer=repo.findById(id).orElseThrow();
+		return bookingHistoryRepo.findByCustomer(customer);
+		
+	}
+
+
 	
 }

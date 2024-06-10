@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Layout</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .seat {
+            margin: 5px;
+        }
+        .seat.selected {
+            background-color: #28a745;
+            color: white;
+        }
+        .screen {
+            width: 100%;
+            height: 40px;
+            background-color: #ccc;
+            text-align: center;
+            line-height: 40px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 ">
+        <h2 class="mb-4 text-center">Select Your Seats</h2>
+        
+        
+        <div class="screen">Screen</div>
+
+        
+        <div class="row justify-content-center">
+            
+            <div class="col-auto">
+                
+                <button name="seatNo" value="A1" class="btn btn-secondary seat">A1</button>
+                <button name="seatNo" value="A2"  class="btn btn-secondary seat">A2</button>
+                <button name="seatNo" value="A3"  class="btn btn-secondary seat">A3</button>
+                <button name="seatNo" value="A4"  class="btn btn-secondary seat">A4</button>
+                <button name="seatNo" value="A5"  class="btn btn-secondary seat">A5</button>
+            </div>
+            <div class="col-auto">
+                <button name="seatNo" value="B1" class="btn btn-secondary seat">B1</button>
+                <button name="seatNo" value="B2" class="btn btn-secondary seat">B2</button>
+                <button name="seatNo" value="B3" class="btn btn-secondary seat">B3</button>
+                <button name="seatNo" value="B4" class="btn btn-secondary seat">B4</button>
+                <button name="seatNo" value="B5" class="btn btn-secondary seat">B5</button>
+            </div>
+            <div class="col-auto">
+                <button name="seatNo" value="a1" class="btn btn-secondary seat">C1</button>
+                <button name="seatNo" value="C3" class="btn btn-secondary seat">C2</button>
+                <button name="seatNo" value="C2" class="btn btn-secondary seat">C3</button>
+                <button name="seatNo" value="C4" class="btn btn-secondary seat">C4</button>
+                <button name="seatNo" value="C5" class="btn btn-secondary seat">C5</button>
+            </div>
+            <div class="col-auto">
+                <button name="seatNo" value="D1" class="btn btn-secondary seat">D1</button>
+                <button name="seatNo" value="D2" class="btn btn-secondary seat">D2</button>
+                <button name="seatNo" value="D3" class="btn btn-secondary seat">D3</button>
+                <button name="seatNo" value="D4" class="btn btn-secondary seat">D4</button>
+                <button name="seatNo" value="D5" class="btn btn-secondary seat">D5</button>
+            </div>
+            <div class="col-auto">
+                <button name="seatNo" value="E1" class="btn btn-secondary seat">E1</button>
+                <button name="seatNo" value="E2" class="btn btn-secondary seat">E2</button>
+                <button name="seatNo" value="E3" class="btn btn-secondary seat">E3</button>
+                <button name="seatNo" value="E4" class="btn btn-secondary seat">E4</button>
+                <button name="seatNo" value="E5" class="btn btn-secondary seat">E5</button>
+            </div>
+        </div>
+	        <div class="d-flex  justify-content-center">
+	        	<input type="submit" class="btn btn-success" value="Book Ticket">
+	        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.seat').on('click', function(){
+                $(this).toggleClass('selected');
+            });
+            $('input[type=submit]').on('click',function(e){
+            	e.preventDefault();
+            	
+            	var selectedSeats=[];
+            	$('.seat.selected').each(function(){
+                    selectedSeats.push($(this).val());
+            	});
+            	
+            	$.ajax({
+                    url: '/selectSeats/bookTicket',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ seats: selectedSeats }),
+                    success: function(response) {
+                        console.log('Booking successful:', response);  // Log success response
+                        alert('Booking successful!');
+                        window.location.href = '/';
+                    },
+                    error: function(error) {
+                        alert('Error booking seats: ' + error.responseText);
+                    }
+                });
+            	
+                console.log("seats : "+selectedSeats)
+
+            	
+            	
+            	
+            });
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,9 @@ import java.util.List;
 
 @Entity
 public class BookingHistory {
-    @Id
+    
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingHistoryId;
 
@@ -13,26 +15,20 @@ public class BookingHistory {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToMany
-    @JoinTable(
-        name = "booking_history_show",
-        joinColumns = @JoinColumn(name = "booking_history_id"),
-        inverseJoinColumns = @JoinColumn(name = "show_id")
-    )
-    private List<MovieShows> shows;
+    @ManyToOne
+    @JoinColumn(name = "show_id")
+    private MovieShows shows;
 
-    @ManyToMany
-    @JoinTable(
-        name = "booking_history_seat",
-        joinColumns = @JoinColumn(name = "booking_history_id"),
-        inverseJoinColumns = @JoinColumn(name = "seat_id")
-    )
-    private List<Seat> seats;
+
+    @Column
+    @ElementCollection
+    private List<String> seats;
     
     @Column
     private String showDate;
-    
-    public String getShowDate() {
+
+
+	public String getShowDate() {
 		return showDate;
 	}
 
@@ -60,21 +56,23 @@ public class BookingHistory {
 		this.customer = customer;
 	}
 
-	public List<MovieShows> getShows() {
+	public MovieShows getShows() {
 		return shows;
 	}
 
-	public void setShows(List<MovieShows> shows) {
+	public void setShows(MovieShows shows) {
 		this.shows = shows;
 	}
 
-	public List<Seat> getSeats() {
+	public List<String> getSeats() {
 		return seats;
 	}
 
-	public void setSeats(List<Seat> seats) {
+	public void setSeats(List<String> seats) {
 		this.seats = seats;
 	}
+	
+	
 
     
 }

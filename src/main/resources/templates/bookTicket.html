@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Shows</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Datepicker CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+     <style>
+        .inline-div {
+            display: inline-block;
+        }
+    </style>
+ 
 </head>
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Select Shows</h2>
-        
-        <!-- Date Picker -->
+                
         <div class="form-group">
             <label for="datePicker">Select Date</label>
-            <input type="text" class="form-control" id="datePicker" placeholder="Select a date" name="showDate">
+            <input type="text" class="form-control" id="datePicker" placeholder="Select a date" name="showDate" required>
         </div>
 
-        <!-- Shows Table -->
+        
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -29,31 +32,46 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="shows: ${shows}">
-                    <td th:text="${shows.theater.theaterName}"></td>
-                    <td ><button th:text="${shows.movieTiming}" class="btn btn-primary" ></button></td> 
+                <tr th:each="entry : ${theaterShowTimings}">
+                    <td th:text="${entry.key.theaterName}"></td>
+                    <td>
+                    <div th:each="timings: ${entry.value}" class="inline-div">
+                    <form action="/selectSeats" method="post">
+                    <input type="hidden" th:value="${entry.key.theaterName} " name="theaterName">
+                    <input type="hidden" th:value="${timings}" name="movieTiming">
+                    <input type="hidden"  name="movieDate" id="movieDate" class="movieDate">
+                    <button type="submit"  th:text="${timings}" class="btn btn-primary mr-2" ></button>
+                    </form>
+                    </div>
+                    </td> 
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- jQuery and Bootstrap JS -->
+
+  
+</body>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <!-- Datepicker JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
-        // Initialize the date picker
-        $('#datePicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true,
-            todayHighlight: true
-        });
+        $(document).ready(function(){
+            $('#datePicker').datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true
+            }).on('changeDate', function(e) {
+                var selectedDate = $('#datePicker').datepicker('getFormattedDate');
+                //console.log("Selected date: " + selectedDate); 
+                $('.movieDate').val(selectedDate);
+            });
+            $('form').on('submit', function(e) {
+                if (!$('#datePicker').val()) {
+                    alert("Please select a date before submitting.");
+                    e.preventDefault();
+                }
+            });
 
-        // Function to handle show selection
-        function selectShow(showTime) {
-            alert('Selected show time: ' + showTime);
-        }
+        });
     </script>
-</body>
 </html>

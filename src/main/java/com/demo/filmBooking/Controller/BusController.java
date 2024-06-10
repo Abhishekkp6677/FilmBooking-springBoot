@@ -1,20 +1,16 @@
 package com.demo.filmBooking.Controller;
 
-import java.io.IOException;
-import java.security.PublicKey;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException; 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.demo.filmBooking.DTO.SeatSelectionRequest;
+import com.demo.filmBooking.beans.BookingHistory;
 import com.demo.filmBooking.beans.Customer;
 import com.demo.filmBooking.beans.Movie;
 import com.demo.filmBooking.beans.MovieShows;
 import com.demo.filmBooking.beans.Theater;
-import com.demo.filmBooking.repository.MovieRepo;
 import com.demo.filmBooking.service.CustomerService;
 
 import jakarta.servlet.http.HttpSession;
@@ -36,6 +33,14 @@ public class BusController {
 	
 	@Autowired
 	private CustomerService service;
+	
+	public boolean isLoggedIn(HttpSession session) {
+		if (session.getAttribute("userId") != null) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 	
 	@GetMapping("/login")
 	public String loginPage() {
@@ -51,6 +56,7 @@ public class BusController {
 //		System.out.println(password);
 		Customer customer=service.login(email, password);
 		if("admin@gmail.com".equals(email) && "12345".equals(password)) {
+			session.setAttribute("admin", "true");
 			System.out.println("****admin login successfull****");
 			return "redirect:/admin";
 			
@@ -59,6 +65,7 @@ public class BusController {
 		else if(customer != null) {
 			System.out.println("****login successfull****");
 			session.setAttribute("username", customer.getCustomerName());
+			session.setAttribute("userId", customer.getCustomerId());
 			return "redirect:/";
 			
 		}else {
@@ -95,18 +102,26 @@ public class BusController {
 		String name=(String) session.getAttribute("username");
 		model.addAttribute("username",name);
 		
+		
+		
 		return "home.html";
 	
 	
 	}
 	
 	@GetMapping("/admin")
-	public String admin(Model model) {
-		System.out.println("****admin controller****");
-		List<Movie> movie=service.getAllMovies();
-		System.out.println(movie);
-		model.addAttribute("movie", movie);
-		return "admin.html";
+	public String admin(Model model,HttpSession session) {
+		if(session.getAttribute("admin")!=null) {
+			
+			System.out.println("****admin controller****");
+			List<Movie> movie=service.getAllMovies();
+			System.out.println(movie);
+			model.addAttribute("movie", movie);
+			return "admin.html";
+		}else {
+			return "redirect:/login";
+		}
+		
 		
 		
 	}
@@ -208,14 +223,85 @@ public class BusController {
 	}
 	
 	@GetMapping("/bookTicket/{movieId}")
-	public String getShows(Model model,@PathVariable Long movieId) {
-		
-		Movie movie = service.getMovieById(movieId).orElseThrow();
-		List<MovieShows> shows=service.getShowByMovieId(movie);
-		System.out.println(shows);
-		model.addAttribute("shows", shows);
-		return "bookTicket.html";
+	public String getShows(Model model,@PathVariable Long movieId,HttpSession session) {
+		if (isLoggedIn(session)) {
+			
+			session.setAttribute("movieId", movieId);
+			Movie movie = service.getMovieById(movieId).orElseThrow();
+			List<MovieShows> shows=service.getShowByMovieId(movie);
+			model.addAttribute("shows", shows);
+			
+			Map<Theater, List<String>> theaterShowTimings = new HashMap();
+			for (MovieShows movieShows : shows) {
+				Theater theater = movieShows.getTheater();
+				List<String> timings= service.findMovieTimingByTheater(movieId, theater.getTheaterId());
+				theaterShowTimings.put(theater, timings);
+				
+			}
+			
+			model.addAttribute("theaterShowTimings", theaterShowTimings);
+//		System.out.println(theaterShowTimings);
+			
+			Long id= (Long) session.getAttribute("userId");
+			model.addAttribute("userId",id);
+			
+			
+			return "bookTicket.html";
+		}else {
+			return "redirect:/login";
+		}
 		 
+	}
+	
+	@PostMapping("/selectSeats")
+	public String getSeats( 
+							@RequestParam("movieDate")String date,
+						 	@RequestParam("theaterName")String theaterName,
+						 	@RequestParam("movieTiming")String movieTiming,
+						 	HttpSession session)
+	{
+//		System.out.println(date);
+//		System.out.println(theaterName);
+//		System.out.println(movieTiming);
+		session.setAttribute("showDate", date);
+		session.setAttribute("theaterName", theaterName);
+		session.setAttribute("movieTiming", movieTiming);
+		
+		return "selectSeats.html";
+		
+	}
+	
+	@PostMapping("/selectSeats/bookTicket")
+	public ResponseEntity<String> bookTicket(@RequestBody SeatSelectionRequest request,HttpSession session) {
+		
+//		System.out.println("postmapping");
+		System.out.println(request.getSeats());
+		System.out.println(request);
+		Long customerId = (Long) session.getAttribute("userId") ;
+		String date = (String) session.getAttribute("showDate") ;
+		String theaterName  = (String) session.getAttribute("theaterName") ;
+		String movieTiming= (String) session.getAttribute("movieTiming") ;
+		Long id= (Long) session.getAttribute("movieId");
+
+		service.addBookingHistory(customerId,date,theaterName,movieTiming,id,request.getSeats());
+        return ResponseEntity.ok("Booking successful");
+
+		
+	}
+	
+	@GetMapping("/bookingHistory")
+	public String bookingHistory(HttpSession session, Model model) {
+		
+		if (isLoggedIn(session)) {
+			
+			Long id=(Long) session.getAttribute("userId");
+			List<BookingHistory> history=service.getHistory(id);
+			model.addAttribute("history",history);
+			return "bookingHistory.html";
+		}else {
+			return "redirect:/login";
+		}
+		
 	}
 	
 	

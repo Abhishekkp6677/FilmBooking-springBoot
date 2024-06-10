@@ -23,8 +23,6 @@ public class MovieShows {
     @JoinColumn(name = "theater_id")
     private Theater theater;
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Seat> seats;
 
     public MovieShows() {
 	   System.out.println("***show object created***");
@@ -62,19 +60,9 @@ public class MovieShows {
 		this.theater = theater;
 	}
 
-	public List<Seat> getSeats() {
-		return seats;
-	}
 
-	public void setSeats(List<Seat> seats) {
-		this.seats = seats;
-	}
 
-	@Override
-	public String toString() {
-		return "Show [showId=" + showId + ", movieTiming=" + movieTiming + ", movie=" + movie + ", theater=" + theater
-				+ ", seats=" + seats + "]";
-	}
+	
     
     
 }
