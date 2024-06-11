@@ -8,6 +8,10 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+	
+	<div th:insert="~{navbarForPages :: navbar}"></div>
+	
+	
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Booking History</h2>
@@ -32,6 +36,7 @@
             		<td>
                 		<span th:each="seat : ${history.seats}" th:text="${seat}+' '"></span>
             		</td>
+            		<td scope="col" th:text="${history.totalPrice}"></td>
             		<td scope="col" ></td>
             		
             	

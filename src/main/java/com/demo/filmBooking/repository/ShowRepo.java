@@ -20,5 +20,7 @@ public interface ShowRepo extends JpaRepository<MovieShows, Long>{
 
 	MovieShows findByTheaterAndMovieAndMovieTiming(Theater theater, Movie movie, String movieTiming);
 
+	MovieShows findByTheaterAndMovieTiming(Theater theater, String movieTiming);
+
 	
 }

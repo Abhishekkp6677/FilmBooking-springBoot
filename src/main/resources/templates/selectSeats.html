@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,9 +22,16 @@
             line-height: 40px;
             margin-bottom: 20px;
         }
+        .seat.booked {
+            background-color: #dc3545;
+            color: white;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
+	<div th:insert="~{navbar :: navbar}"></div>
+	
     <div class="container mt-5 ">
         <h2 class="mb-4 text-center">Select Your Seats</h2>
         
@@ -36,41 +43,49 @@
             
             <div class="col-auto">
                 
-                <button name="seatNo" value="A1" class="btn btn-secondary seat">A1</button>
-                <button name="seatNo" value="A2"  class="btn btn-secondary seat">A2</button>
-                <button name="seatNo" value="A3"  class="btn btn-secondary seat">A3</button>
-                <button name="seatNo" value="A4"  class="btn btn-secondary seat">A4</button>
-                <button name="seatNo" value="A5"  class="btn btn-secondary seat">A5</button>
+                <button name="seatNo" value="A1" th:classappend="${selectedSeats.contains('A1') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('A1') ? 'disabled' : null}" class="btn btn-secondary seat">A1</button>
+                <button name="seatNo" value="A2" th:classappend="${selectedSeats.contains('A2') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('A2') ? 'disabled' : null}" class="btn btn-secondary seat">A2</button>
+                <button name="seatNo" value="A3" th:classappend="${selectedSeats.contains('A3') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('A3') ? 'disabled' : null}" class="btn btn-secondary seat">A3</button>
+                <button name="seatNo" value="A4" th:classappend="${selectedSeats.contains('A4') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('A4') ? 'disabled' : null}" class="btn btn-secondary seat">A4</button>
+                <button name="seatNo" value="A5" th:classappend="${selectedSeats.contains('A5') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('A5') ? 'disabled' : null}" class="btn btn-secondary seat">A5</button>
+                
             </div>
             <div class="col-auto">
-                <button name="seatNo" value="B1" class="btn btn-secondary seat">B1</button>
-                <button name="seatNo" value="B2" class="btn btn-secondary seat">B2</button>
-                <button name="seatNo" value="B3" class="btn btn-secondary seat">B3</button>
-                <button name="seatNo" value="B4" class="btn btn-secondary seat">B4</button>
-                <button name="seatNo" value="B5" class="btn btn-secondary seat">B5</button>
+                <button name="seatNo" value="B1" th:classappend="${selectedSeats.contains('B1') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('B1') ? 'disabled' : null}" class="btn btn-secondary seat">B1</button>
+                <button name="seatNo" value="B2" th:classappend="${selectedSeats.contains('B2') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('B2') ? 'disabled' : null}" class="btn btn-secondary seat">B2</button>
+                <button name="seatNo" value="B3" th:classappend="${selectedSeats.contains('B3') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('B3') ? 'disabled' : null}" class="btn btn-secondary seat">B3</button>
+                <button name="seatNo" value="B4" th:classappend="${selectedSeats.contains('B4') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('B4') ? 'disabled' : null}" class="btn btn-secondary seat">B4</button>
+                <button name="seatNo" value="B5" th:classappend="${selectedSeats.contains('B5') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('B5') ? 'disabled' : null}" class="btn btn-secondary seat">B5</button>
+
             </div>
             <div class="col-auto">
-                <button name="seatNo" value="a1" class="btn btn-secondary seat">C1</button>
-                <button name="seatNo" value="C3" class="btn btn-secondary seat">C2</button>
-                <button name="seatNo" value="C2" class="btn btn-secondary seat">C3</button>
-                <button name="seatNo" value="C4" class="btn btn-secondary seat">C4</button>
-                <button name="seatNo" value="C5" class="btn btn-secondary seat">C5</button>
+                <button name="seatNo" value="C1" th:classappend="${selectedSeats.contains('C1') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('C1') ? 'disabled' : null}" class="btn btn-secondary seat">C1</button>
+                <button name="seatNo" value="C2" th:classappend="${selectedSeats.contains('C2') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('C2') ? 'disabled' : null}" class="btn btn-secondary seat">C2</button>
+                <button name="seatNo" value="C3" th:classappend="${selectedSeats.contains('C3') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('C3') ? 'disabled' : null}" class="btn btn-secondary seat">C3</button>
+                <button name="seatNo" value="C4" th:classappend="${selectedSeats.contains('C4') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('C4') ? 'disabled' : null}" class="btn btn-secondary seat">C4</button>
+                <button name="seatNo" value="C5" th:classappend="${selectedSeats.contains('C5') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('C5') ? 'disabled' : null}" class="btn btn-secondary seat">C5</button>
+                
             </div>
             <div class="col-auto">
-                <button name="seatNo" value="D1" class="btn btn-secondary seat">D1</button>
-                <button name="seatNo" value="D2" class="btn btn-secondary seat">D2</button>
-                <button name="seatNo" value="D3" class="btn btn-secondary seat">D3</button>
-                <button name="seatNo" value="D4" class="btn btn-secondary seat">D4</button>
-                <button name="seatNo" value="D5" class="btn btn-secondary seat">D5</button>
+                <button name="seatNo" value="D1" th:classappend="${selectedSeats.contains('D1') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('D1') ? 'disabled' : null}" class="btn btn-secondary seat">D1</button>
+                <button name="seatNo" value="D2" th:classappend="${selectedSeats.contains('D2') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('D2') ? 'disabled' : null}" class="btn btn-secondary seat">D2</button>
+                <button name="seatNo" value="D3" th:classappend="${selectedSeats.contains('D3') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('D3') ? 'disabled' : null}" class="btn btn-secondary seat">D3</button>
+                <button name="seatNo" value="D4" th:classappend="${selectedSeats.contains('D4') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('D4') ? 'disabled' : null}" class="btn btn-secondary seat">D4</button>
+                <button name="seatNo" value="D5" th:classappend="${selectedSeats.contains('D5') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('D5') ? 'disabled' : null}" class="btn btn-secondary seat">D5</button>
+
             </div>
             <div class="col-auto">
-                <button name="seatNo" value="E1" class="btn btn-secondary seat">E1</button>
-                <button name="seatNo" value="E2" class="btn btn-secondary seat">E2</button>
-                <button name="seatNo" value="E3" class="btn btn-secondary seat">E3</button>
-                <button name="seatNo" value="E4" class="btn btn-secondary seat">E4</button>
-                <button name="seatNo" value="E5" class="btn btn-secondary seat">E5</button>
+                <button name="seatNo" value="E1" th:classappend="${selectedSeats.contains('E1') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('E1') ? 'disabled' : null}" class="btn btn-secondary seat">E1</button>
+                <button name="seatNo" value="E2" th:classappend="${selectedSeats.contains('E2') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('E2') ? 'disabled' : null}" class="btn btn-secondary seat">E2</button>
+                <button name="seatNo" value="E3" th:classappend="${selectedSeats.contains('E3') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('E3') ? 'disabled' : null}" class="btn btn-secondary seat">E3</button>
+                <button name="seatNo" value="E4" th:classappend="${selectedSeats.contains('E4') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('E4') ? 'disabled' : null}" class="btn btn-secondary seat">E4</button>
+                <button name="seatNo" value="E5" th:classappend="${selectedSeats.contains('E5') ? ' booked' : ''}" th:disabled="${selectedSeats.contains('E5') ? 'disabled' : null}" class="btn btn-secondary seat">E5</button>
             </div>
-        </div>
+        </div><br><br>
+        
+        <div class="d-flex justify-content-center">
+    		<div>Total Price: <span id="totalPrice">0</span> Rupees</div>
+		</div><br><br>
 	        <div class="d-flex  justify-content-center">
 	        	<input type="submit" class="btn btn-success" value="Book Ticket">
 	        </div>
@@ -81,9 +96,22 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function(){
+        	const seatPrice = 180;
+
+            function updateTotalPrice() {
+                let selectedSeatsCount = $('.seat.selected').length;
+                let totalPrice = selectedSeatsCount * seatPrice;
+                $('#totalPrice').text(totalPrice);
+                return totalPrice;
+            }
+        	
             $('.seat').on('click', function(){
                 $(this).toggleClass('selected');
+                updateTotalPrice();
             });
+            
+            
+            
             $('input[type=submit]').on('click',function(e){
             	e.preventDefault();
             	
@@ -92,11 +120,13 @@
                     selectedSeats.push($(this).val());
             	});
             	
+            	var totalPrice = updateTotalPrice();
+            	
             	$.ajax({
                     url: '/selectSeats/bookTicket',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ seats: selectedSeats }),
+                    data: JSON.stringify({ seats: selectedSeats, price: totalPrice }),
                     success: function(response) {
                         console.log('Booking successful:', response);  // Log success response
                         alert('Booking successful!');
@@ -107,7 +137,9 @@
                     }
                 });
             	
-                console.log("seats : "+selectedSeats)
+                console.log("seats : "+selectedSeats);
+                console.log("total price : " + totalPrice);
+
 
             	
             	

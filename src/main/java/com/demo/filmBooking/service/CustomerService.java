@@ -192,7 +192,12 @@ public class CustomerService {
 		return showRepo.findMovieTimingByTheater( movieId,  theaterId);
 	}
 
-	public BookingHistory addBookingHistory(Long customerId, String date,String theaterName ,String movieTiming, Long id, List<String> seats) {
+	public BookingHistory addBookingHistory(Long customerId,
+											String date,
+											String theaterName ,
+											String movieTiming,
+											Long id, List<String> seats,
+											double amount) {
 		
 		Customer customer=repo.findById(customerId).orElseThrow();
 		Theater theater= theaterRepo.findByTheaterName(theaterName);
@@ -204,7 +209,8 @@ public class CustomerService {
 		history.setCustomer(customer);
 		history.setShows(shows);
 		history.setSeats(seats);
-		System.out.println(history);
+		history.setTotalPrice(amount);
+//		System.out.println(history);
 		return bookingHistoryRepo.save(history);
 		
 	}
@@ -214,6 +220,24 @@ public class CustomerService {
 		Customer customer=repo.findById(id).orElseThrow();
 		return bookingHistoryRepo.findByCustomer(customer);
 		
+	}
+
+	
+
+	public Theater getTheaterByTheaterName(String theaterName) {
+		
+		return theaterRepo.findByTheaterName(theaterName);
+	}
+
+	public MovieShows getShowsByTheaterAndMovieTiming(Theater theater, String movieTiming) {
+		
+		return showRepo.findByTheaterAndMovieTiming(theater, movieTiming);
+		
+	}
+
+	public List<String> getSeatsByShows(MovieShows shows, String date) {
+		// TODO Auto-generated method stub
+		return bookingHistoryRepo.findSeatsByShow(shows,date); 
 	}
 
 

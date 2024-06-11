@@ -240,10 +240,12 @@ public class BusController {
 			}
 			
 			model.addAttribute("theaterShowTimings", theaterShowTimings);
-//		System.out.println(theaterShowTimings);
+//			System.out.println(theaterShowTimings);
 			
 			Long id= (Long) session.getAttribute("userId");
 			model.addAttribute("userId",id);
+			
+			
 			
 			
 			return "bookTicket.html";
@@ -258,7 +260,8 @@ public class BusController {
 							@RequestParam("movieDate")String date,
 						 	@RequestParam("theaterName")String theaterName,
 						 	@RequestParam("movieTiming")String movieTiming,
-						 	HttpSession session)
+						 	HttpSession session,
+						 	Model model)
 	{
 //		System.out.println(date);
 //		System.out.println(theaterName);
@@ -267,6 +270,19 @@ public class BusController {
 		session.setAttribute("theaterName", theaterName);
 		session.setAttribute("movieTiming", movieTiming);
 		
+		Theater theater=service.getTheaterByTheaterName(theaterName);
+		
+		MovieShows shows =service.getShowsByTheaterAndMovieTiming(theater,movieTiming);
+		
+		List< String> seats= service.getSeatsByShows(shows,date);
+		
+		model.addAttribute("selectedSeats", seats);
+		
+		System.out.println("seats: "+seats);
+		
+		
+		
+		
 		return "selectSeats.html";
 		
 	}
@@ -274,16 +290,17 @@ public class BusController {
 	@PostMapping("/selectSeats/bookTicket")
 	public ResponseEntity<String> bookTicket(@RequestBody SeatSelectionRequest request,HttpSession session) {
 		
-//		System.out.println("postmapping");
-		System.out.println(request.getSeats());
-		System.out.println(request);
+		System.out.println("postmapping");
+//		System.out.println(request.getSeats());
+		System.out.println(request.getPrice());
+//		System.out.println(request);
 		Long customerId = (Long) session.getAttribute("userId") ;
 		String date = (String) session.getAttribute("showDate") ;
 		String theaterName  = (String) session.getAttribute("theaterName") ;
 		String movieTiming= (String) session.getAttribute("movieTiming") ;
 		Long id= (Long) session.getAttribute("movieId");
 
-		service.addBookingHistory(customerId,date,theaterName,movieTiming,id,request.getSeats());
+		service.addBookingHistory(customerId,date,theaterName,movieTiming,id,request.getSeats(),request.getPrice());
         return ResponseEntity.ok("Booking successful");
 
 		
